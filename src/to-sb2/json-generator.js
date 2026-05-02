@@ -1,6 +1,6 @@
 /* eslint no-use-before-define:1 */
 
-import {ImageMediaData, SoundMediaData, StageData, SpriteData} from '../squeak/types';
+import {ImageMediaData, SoundMediaData, StageData, SpriteData, WatcherData} from '../squeak/types';
 import md5 from 'js-md5';
 
 // https://github.com/LLK/scratch-flash/blob/cb5f42f039ef633710faf9c63b69e8368b280372/src/blocks/BlockIO.as#L292-L308
@@ -98,10 +98,23 @@ const toSb2Json = root => {
         visible: valueOf(hiddenWhenNull) !== null
     });
 
-    // TODO: Implement toSb2JsonWatcher
-    // const toSb2JsonWatcher = watcher => {
-    //
-    // };
+    // TODO: figure out how to implement hidden watchers
+    const toSb2JsonWatcher = watcher => {
+        return {
+            target: watcher.target.objName,
+            cmd: watcher.readout.cmd,
+            param: watcher.readout.param,
+            color: watcher.color === 4294967295 ? 15629590 : watcher.color,
+            label: watcher.readout.param,
+            mode: watcher.mode,
+            sliderMin: watcher.sliderMin,
+            sliderMax: watcher.sliderMax,
+            isDiscrete: watcher.isDiscrete,
+            x: watcher.x,
+            y: watcher.y,
+            visible: true
+        };
+    };
 
     // TODO: Implement toSb2JsonListWatcher
     // const toSb2JsonListWatcher = listWatcher => {
@@ -199,6 +212,8 @@ const toSb2Json = root => {
     const toSb2JsonChild = child => {
         if (child instanceof SpriteData) {
             return toSb2JsonSprite(child);
+        } else if (child instanceof WatcherData) {
+            return toSb2JsonWatcher(child);
         }
         return null;
     };
